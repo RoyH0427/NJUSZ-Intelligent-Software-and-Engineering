@@ -71,16 +71,47 @@ $$
 
 ## 题解
 
-1. 读取输入的三个整数，分别代表年（year）、月（month）和日（day）。
-2. 使用给定的公式计算儒略日数（JDN）：
-   - 首先，计算变量 `a`，它表示月份的修正值：$a = \lfloor \frac{14 - \text{month}}{12} \rfloor$
-   - 然后，计算变量 `y`，它表示年份的修正值：$y = \text{year} + 4800 - a$
-   - 接下来，计算变量 `m`，它表示修正后的月份：$m = \text{month} + 12a - 3$
-   - 最后，使用公式计算儒略日数 `JDN`：$JDN = \text{day} + \lfloor \frac{153m+2}{5} \rfloor + 365y + \lfloor \frac{y}{4} \rfloor - \lfloor \frac{y}{100} \rfloor + \lfloor \frac{y}{400} \rfloor - 32045$
-3. 输出计算得到的儒略日数（JDN）。
+### 思路
 
-注意事项：
+这个问题涉及到计算儒略日数（Julian Day Number，JDN），需要根据给定的公历日期计算。可以使用提供的公式来计算儒略日数。
 
-- 本题不需要特殊的边界条件检查，因为题目已经明确了输入数据范围在合法日期内。
-- 所有的计算都可以用整数运算完成，不需要使用浮点数。
-- 注意使用整数除法运算，即使用 `//` 运算符来进行整数除法，以保证结果是整数
+### 解题方法
+
+1. 从输入中读取年、月、日的整数值。
+2. 使用提供的公式计算儒略日数：
+   - 首先，计算变量 $a$，$a = \left\lfloor \frac{14 - \text{month}}{12} \right\rfloor$。
+   - 然后，计算变量 $y$，$y = \text{year} + 4800 - a$。
+   - 接着，计算变量 $m$，$m = \text{month} + 12a - 3$。
+   - 最后，计算儒略日数 $JDN$，$JDN = \text{day} + \left\lfloor \frac{153m + 2}{5} \right\rfloor + 365y + \left\lfloor \frac{y}{4} \right\rfloor - \left\lfloor \frac{y}{100} \right\rfloor + \left\lfloor \frac{y}{400} \right\rfloor - 32045$。
+3. 输出计算得到的儒略日数 $JDN$。
+
+### 复杂度
+
+  - 时间复杂度：$O(1)$，因为只进行了一些基本的数学运算和变量赋值。
+
+- 空间复杂度：$O(1)$，因为只使用了几个额外的变量来存储结果。
+
+### Code
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int year, month, day;
+
+    // 从输入中读取年、月、日
+    scanf("%d %d %d", &year, &month, &day);
+
+    // 计算儒略日数
+    int a = (14 - month) / 12;
+    int y = year + 4800 - a;
+    int m = month + 12 * a - 3;
+    int JDN = day + (153 * m + 2) / 5 + 365 * y + y / 4 - y / 100 + y / 400 - 32045;
+
+    // 输出儒略日数
+    printf("%d\n", JDN);
+
+    return 0;
+}
+```
