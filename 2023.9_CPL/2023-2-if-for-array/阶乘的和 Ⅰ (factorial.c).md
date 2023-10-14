@@ -74,7 +74,7 @@
 ### 解题方法  
 
 1. 读取输入的正整数 n。
-2. 初始化两个变量 `result` 和 `factorial`，分别用于存储累加的结果和当前计算的阶乘值。初始时，`result` 和 `factorial` 都设为 1。
+2. 初始化两个变量 `result` 和 `factorial`，分别用于存储累加的结果和当前计算的阶乘值。初始时，`result` 和 `factorial` 分别设为 0 和 1。
 3. 使用循环从 1 遍历到 n：
    - 计算当前阶乘值 `factorial`，更新为 `(factorial * i) % 10007`。
    - 累加当前阶乘值到 `result`，更新为 `(result + factorial) % 10007`。
