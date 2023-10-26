@@ -1,5 +1,3 @@
-# NJU-CPL-2022-2023-Suzhou
+# NJUSZ-Intelligent-Software-and-Engineering
 
-南京大学技术科学试验班2022/2023CPL作业
-
-## 友情提示：代码仅供参考，请勿抄袭，否则后果自负。
+来自南京大学技术科学试验班智能软件与工程专业的一个fvv
