@@ -1,0 +1,158 @@
+%\documentclass[a4paper]{article}
+%\usepackage{geometry}
+%\geometry{a4paper,scale=0.8}
+\documentclass[8pt]{article}
+\usepackage{ctex}
+\usepackage{indentfirst}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{CJK}
+\usepackage[fleqn]{amsmath}
+\usepackage{parskip}
+\usepackage{listings}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+
+% 设置页眉
+\fancyhead[L]{2024年秋季}
+\fancyhead[C]{机器学习}
+\fancyhead[R]{作业一}
+
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+
+\begin{document}
+
+\textbf{\color{blue} \Large 姓名：张三 \ \ \ 学号：123456789 \ \ \ \today}
+
+
+\section*{一. (30 points) 性能度量}
+学习器$\mathcal{L}$在某个多分类任务数据集上的预测混淆矩阵如表1所示，请回答下列问题。本题的答案请以分式或者小数点后两位的形式给出，比如P=0.67.
+\begin{table}[h]
+%\begin{table}\small \setlength{\tabcolsep}{18pt}
+\centering
+\begin{tabular}{l|c|c|c}
+\toprule
+\multirow{2}{*}{\textbf{真实情况}}  & \multicolumn{3}{c}{\textbf{预测结果}} \\
+\cmidrule(lr){2-4} & \textbf{第1类} & \textbf{第2类} & \textbf{第3类}\\
+\midrule
+\textbf{第1类}& 7 & 1 & 4\\
+\midrule
+\textbf{第2类}& 2 & 6 & 4  \\
+\midrule
+\textbf{第3类} &2  & 2 & 8 \\
+\bottomrule
+\end{tabular}
+\caption{学习器$\mathcal{L}$在某个多分类任务数据集上的预测混淆矩阵}
+\end{table}
+
+1. 该学习器的预测准确率是多少？(5 points)
+
+2. 计算该学习器的微查准率(micro-P)、宏查准率(macro-P)、微查全率(micro-R) 和宏查全率(macro-R)。 (10 points)
+
+3. 计算该学习器的微F1 (micro-F1)和宏F1 (macro-F1)。 (5 points)
+
+4. 在多分类中，每个样例只有一个标签。而在多标签分类中，每个样例可以有多个标签。如表2所示，一共有3个标签，样例$x_1$的标签是1和3，学习器的预测是1和2。请根据教材2.3.2 查准率、查全率与F1章节的描述和表2的样例，计算学习器$\mathcal{L}_1$的微查准率、微查全率、微F1、宏查准率、宏查全率和宏F1。[提示:依然是利用各类的混淆矩阵计算微F1和宏F1.] (10 points)
+
+
+\begin{table}[h]
+%\begin{table}\small \setlength{\tabcolsep}{18pt}
+\centering
+\begin{tabular}{l|c|c|c|c}
+\toprule
+\textbf{样例}& $x_1$ & $x_2$ & $x_3$ & $x_4$\\
+\midrule
+\textbf{标签} & 1,3 & 1,2 & 2,3 & 1,2,3 \\
+\midrule
+\textbf{学习器预测} & 1,2    & 2,3 & 2,3 & 1,3\\
+\bottomrule
+\end{tabular}
+\caption{学习器$\mathcal{L}_1$的样例表}
+\end{table}
+
+
+
+\textbf{\large 解:}
+
+\clearpage
+
+
+\section*{二. (30 points) 性能度量}
+假设数据集包含10个样例, 其对应的真实标签和学习器的输出值(从大到小排列) 如表3所示。
+该任务是一个二分类任务, 标签1或0表示真实标签为正例或负例。学习器的输出值代表学习器对该样例是正例的置信度(认为该样例是正例的概率).
+
+\begin{table}[h]
+%\begin{table}\small \setlength{\tabcolsep}{18pt}
+\centering
+\begin{tabular}{l|ccccccccccc}
+\toprule
+\textbf{样例}& $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ & $x_7$ & $x_8$ & $x_9$ & $x_{10}$\\
+\midrule
+\textbf{标签} & 1 & 1 & 0 & 1 & 1 & 0 & 1 & 0 & 0 & 0\\
+\midrule
+\textbf{学习器输出值} & 0.92    & 0.75 & 0.62 &  0.55 & 0.49 & 0.4 & 0.31 & 0.28 & 0.2 & 0.1\\
+\bottomrule
+\end{tabular}
+\caption{样例表}
+\end{table}
+
+1. 计算P-R曲线每一个端点的坐标并绘图 (8 points);
+
+2. 计算ROC曲线每一个端点的坐标并绘图 (8 points)；
+
+3. 基于上一问，计算AUC的值 (4 points)；AUC值请以小数点后两位的形式给出。
+
+4. FPR95是一个常见的性能度量指标，它指的是当真正例率(true positive rate)为95\%时，假正例率(false positive rate)的数值。请问该指标越高学习性能越好还是越低性能越好，并且求解FPR75为多少。[提示: FPR75和FPR95类似，FPR75是真正例率为75\%。](10 points)
+
+
+\textbf{\large 解:}
+\vspace{3em}
+
+\section*{三. (10 points) 规范化}
+Min-max规范化和z-score规范化是两种常见的规范化方法。两种规范化方法分别如下面的公式所示:
+\begin{equation}
+    x' = x'_{min} +  \frac{x-x_{min}}{x_{max}-x_{min}} \times (x'_{max}-x'_{min})
+\end{equation}
+\begin{equation}
+    x' = \frac{x-\bar{x}}{\sigma_x}
+\end{equation}
+其中$x$和$x'$分别是规范化前后的值，$x_{max}$和$x_{min}$分别是规范化前的最大值和最小值，$x'_{max}$和$x'_{min}$分别是规范化后的最大值和最小值，$\bar{x}$和$\sigma_x$是规范化前的均值和标准差。
+请分析二种规范化的优缺点。
+
+\textbf{\large 解:}
+
+
+\section*{四. (30 points) 线性回归}
+给定包含m个样例的数据集$D = \{(\textbf{x}_1,y_1), (\textbf{x}_2,y_2),\cdots, (\textbf{x}_m,y_m)\}$，其中$\textbf{x}_i = (x_{i1}; x_{i2}; \cdots; x_{id}) \in \mathbb{R}^d$, $y_i \in \mathbb{R}$为$\textbf{x}_i$的实数标记。
+线性回归模型要求该线性模型的预测结果和其对应的标记之间的误差之和最小:
+\begin{equation}
+    (\textbf{w}^*, b^*) = \mathop{\text{argmin}}\limits_{(\textbf{w},b)} \frac{1}{2} \sum_{i=1}^m(y_i - (\textbf{w}^\top \textbf{x}_i+b))^2
+\end{equation}
+
+即寻找一组权重$(\textbf{w}, b)$，使其对$D$中示例预测的整体误差最小。
+定义$y=[y_1; y_2; \cdots; y_m] \in \mathbb{R}^m$且$\textbf{X}=[\textbf{x}_1^\top;\textbf{x}_2^\top;\cdots; \textbf{x}_m^\top] \in \mathbb{R}^{m \times d}$.
+
+1. 请将线性回归的优化过程使用矩阵进行表示; (10 points)
+
+2. 使用矩阵形式给出权重$\textbf{w}^*$和偏移$b^*$最优解的表达式； (10 points)
+
+3. 针对波士顿房价预测数据集(boston),编程实现原始线性回归模型。请基于闭式解在训练集上构建模型, 计算测试集上的均方误差(Mean Square Error, MSE)。请参考如下形式完成函数linear\_regression和MSE的代码。除示例代码中使用到的sklearn 库函数外, 不能使用其他的sklearn 函数, 需要基于numpy 实现线性回归模型闭式解以及MSE的计算. (10 points)
+
+
+\begin{figure*}[h]
+\centering
+\includegraphics[width=1\columnwidth]{code.png}
+%\caption{The process of consistent greedy inference algorithm. The algorithm first punishes the inconsistent prediction and then greedily selects non-overlapping spans with maximum probability based on adjusted probability.} \label{fig:inference}
+\end{figure*}
+
+\textbf{\large 解:}
+
+\end{document}

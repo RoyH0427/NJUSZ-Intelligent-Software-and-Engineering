@@ -1,0 +1,570 @@
+%\documentclass[a4paper]{article}
+%\usepackage{geometry}
+%\geometry{a4paper,scale=0.8}
+\documentclass[8pt]{article}
+\usepackage{ctex}
+\usepackage{indentfirst}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{CJK}
+\usepackage[fleqn]{amsmath}
+\usepackage{parskip}
+\usepackage{listings}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+
+% 设置页眉
+\fancyhead[L]{2024年秋季}
+\fancyhead[C]{机器学习}
+\fancyhead[R]{作业四}
+
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+% 定义Python代码风格
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,     
+    captionpos=b,        
+    keepspaces=true,     
+    numbers=left,        
+    numbersep=5pt,       
+    showspaces=false,    showstringspaces=false,
+    showtabs=false,      
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+\begin{document}
+
+\textbf{\color{blue} \Large 姓名：张三 \ \ \ 学号：123456789 \ \ \ \today}
+
+
+\section*{一. (30 points) 随机森林的原理}
+
+集成学习是一种通用技术，通过将多个不同模型的预测结果结合起来，以平均值或多数投票的方式生成单一预测，从而有效应对过拟合问题。
+
+
+1. 考虑一组互不相关的随机变量 $\{Y_i\}_{i=1}^n$，其均值为 $\mu$，方差为 $\sigma^2$。  
+请计算这些随机变量平均值的期望和方差，给出计算过程。  
+提示：在集成方法的背景下，这些 $Y_i$ 类似于分类器 $i$ 所作的预测。（5 points）
+
+\textbf{\large 解:}
+\vspace{3em}
+
+2. 在第1小问中，我们看到对于不相关的分类器，取平均可以有效减少方差。  
+尽管现实中的预测不可能完全不相关，但降低决策树之间的相关性通常能减少最终方差。  
+现在，重新考虑一组具有相关性的随机变量 $\{Z_i\}_{i=1}^n$，其均值为 $\mu$，方差为 $\sigma^2$，每个 $Z_i \in \mathbb{R}$ 为标量。  
+假设对任意 $i \neq j$，$\operatorname{Corr}(Z_i, Z_j) = \rho$。  
+提示：如果你不记得相关性与协方差之间的关系，请回顾你的概率论等课程内容。 
+\begin{itemize}
+\item
+请计算随机变量 $Z_i$ 平均值的方差，以 $\sigma$、$\rho$ 和 $n$ 为变量表示，给出计算过程。（5 points）  
+\item
+当 $n$ 非常大时，会发生什么？这对于取平均的潜在有效性说明了什么？  
+（……如果 $\rho$ 很大（$| \rho | \approx 1$）会怎样？……如果 $\rho$ 非常小（$|\rho| \approx 0$）又会怎样？……如果 $\rho$ 处于中等水平（$|\rho| \approx 0.5$）呢？）  
+无需严格推导——基于你得出的方差公式，用定性分析进行讨论即可。 （6 points）
+\end{itemize}
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+3. Bagging 是一种通过随机化从同一数据集生成多个不同学习器的方法。给定一个大小为 $n$ 的训练集，Bagging 会通过有放回抽样生成 $T$ 个随机子样本集，每个子样本集大小为 $n'$。
+在每个子样本集中，一些数据点可能会被多次选中，而另一些可能完全未被选中。
+当 $n' = n$ 时，大约 $63\%$ 的数据点会被选中，而剩下的 $37\%$ 被称为袋外样本点（Out-of-Bag，OOB）。
+\begin{itemize}
+\item
+为什么是 $63\%$？
+提示：当 $n$ 很大时，某个样本点未被选中的概率是多少？请只考虑在任意一个子样本集中（而不是所有 $T$ 个子样本集）未被选中的概率。（7 points）
+\item
+关于决策树的数量 $T$。
+集成中的决策树数量通常需要在运行时间和降低方差之间进行权衡（典型值范围从几十到几千棵树）。
+而子样本大小 $n'$ 对运行时间的影响较小，因此选择 $n'$ 时主要考虑如何获得最优预测结果。
+虽然常见实践是设置 $n' = n$，但这并非总是最佳选择。
+你会如何建议我们选择超参数 $n'$？ （7 points）
+\end{itemize}
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+% \begin{lstlisting}[language=Python, caption=SMOTE模型接口]
+% """
+% 注意：
+% 1. 这个框架提供了基本的结构，您需要完成所有标记为 'pass' 的函数。
+% 2. 记得处理数值稳定性问题，例如在计算对数时避免除以零。
+% 3. 在报告中详细讨论您的观察结果和任何有趣的发现。
+% """
+% class SMOTE(object):
+%     def __init__(self , X, y, N, K, random_state =0):
+%         self.N = N # 每个小类样本合成样本个数
+%         self.K = K # 近邻个数
+%         self.label = y # 进行数据增强的类别
+%         self.sample = X
+%         self.n_sample , self.n = self.sample.shape # 获得样本个数, 特征个数
+    
+%     def over_sampling(self):
+%         pass
+% \end{lstlisting}
+
+% 4. 请说明SMOTE算法的缺点并讨论可能的改进方案（5 points）。
+
+
+
+
+\section*{二. (20 points) 随机森林的实现}
+
+在本题中，你将实现决策树和随机森林，用于在以下两个数据集上进行分类：1）垃圾邮件数据集，2）泰坦尼克号数据集（用于预测这场著名灾难的幸存者）。数据已随作业提供。
+
+为方便起见，我们提供了初始代码，其中包括预处理步骤和部分功能的实现。你可以自由选择使用或不使用这些代码来完成实现。
+
+\begin{lstlisting}[language=Python, caption=随机森林模型接口]
+"""
+注意：
+1. 这个框架提供了基本的结构，您需要完成所有标记为 'pass' 的函数。
+2. 记得处理数值稳定性问题，例如在计算对数时避免除以零。
+3. 在报告中详细讨论您的观察结果和任何有趣的发现。
+"""
+from collections import Counter
+
+import numpy as np
+from numpy import genfromtxt
+import scipy.io
+from scipy import stats
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.model_selection import cross_val_score
+import pandas as pd
+from pydot import graph_from_dot_data
+import io
+
+import random
+random.seed(246810)
+np.random.seed(246810)
+
+eps = 1e-5  # a small number
+
+class BaggedTrees(BaseEstimator, ClassifierMixin):
+
+    def __init__(self, params=None, n=200):
+        if params is None:
+            params = {}
+        self.params = params
+        self.n = n
+        self.decision_trees = [
+            DecisionTreeClassifier(random_state=i, **self.params)
+            for i in range(self.n)
+        ]
+
+    def fit(self, X, y):
+        # TODO
+        pass
+
+    def predict(self, X):
+        # TODO
+        pass
+
+
+class RandomForest(BaggedTrees):
+
+    def __init__(self, params=None, n=200, m=1):
+        if params is None:
+            params = {}
+        params['max_features'] = m
+        self.m = m
+        super().__init__(params=params, n=n)
+
+
+class BoostedRandomForest(RandomForest):
+    # OPTIONAL
+    def fit(self, X, y):
+        # TODO
+        pass
+    
+    def predict(self, X):
+        # TODO
+        pass
+
+
+def preprocess(data, fill_mode=True, min_freq=10, onehot_cols=[]):
+    # Temporarily assign -1 to missing data
+    data[data == b''] = '-1'
+
+    # Hash the columns (used for handling strings)
+    onehot_encoding = []
+    onehot_features = []
+    for col in onehot_cols:
+        counter = Counter(data[:, col])
+        for term in counter.most_common():
+            if term[0] == b'-1':
+                continue
+            if term[-1] <= min_freq:
+                break
+            onehot_features.append(term[0])
+            onehot_encoding.append((data[:, col] == term[0]).astype(float))
+        data[:, col] = '0'
+    onehot_encoding = np.array(onehot_encoding).T
+    data = np.hstack(
+        [np.array(data, dtype=float),
+         np.array(onehot_encoding)])
+
+    # Replace missing data with the mode value. We use the mode instead of
+    # the mean or median because this makes more sense for categorical
+    # features such as gender or cabin type, which are not ordered.
+    if fill_mode:
+        # TODO
+        pass
+
+    return data, onehot_features
+
+
+def evaluate(clf):
+    print("Cross validation", cross_val_score(clf, X, y))
+    if hasattr(clf, "decision_trees"):
+        counter = Counter([t.tree_.feature[0] for t in clf.decision_trees])
+        first_splits = [
+            (features[term[0]], term[1]) for term in counter.most_common()
+        ]
+        print("First splits", first_splits)
+
+
+if __name__ == "__main__":
+    dataset = "titanic"
+    # dataset = "spam"
+    params = {
+        "max_depth": 5,
+        # "random_state": 6,
+        "min_samples_leaf": 10,
+    }
+    N = 100
+
+    if dataset == "titanic":
+        # Load titanic data
+        path_train = 'datasets/titanic/titanic_training.csv'
+        data = genfromtxt(path_train, delimiter=',', dtype=None)
+        path_test = 'datasets/titanic/titanic_testing_data.csv'
+        test_data = genfromtxt(path_test, delimiter=',', dtype=None)
+        y = data[1:, 0]  # label = survived
+        class_names = ["Died", "Survived"]
+
+        labeled_idx = np.where(y != b'')[0]
+        y = np.array(y[labeled_idx], dtype=float).astype(int)
+        print("\n\nPart (b): preprocessing the titanic dataset")
+        X, onehot_features = preprocess(data[1:, 1:], onehot_cols=[1, 5, 7, 8])
+        X = X[labeled_idx, :]
+        Z, _ = preprocess(test_data[1:, :], onehot_cols=[1, 5, 7, 8])
+        assert X.shape[1] == Z.shape[1]
+        features = list(data[0, 1:]) + onehot_features
+
+    elif dataset == "spam":
+        features = [
+            "pain", "private", "bank", "money", "drug", "spam", "prescription",
+            "creative", "height", "featured", "differ", "width", "other",
+            "energy", "business", "message", "volumes", "revision", "path",
+            "meter", "memo", "planning", "pleased", "record", "out",
+            "semicolon", "dollar", "sharp", "exclamation", "parenthesis",
+            "square_bracket", "ampersand"
+        ]
+        assert len(features) == 32
+
+        # Load spam data
+        path_train = 'datasets/spam_data/spam_data.mat'
+        data = scipy.io.loadmat(path_train)
+        X = data['training_data']
+        y = np.squeeze(data['training_labels'])
+        Z = data['test_data']
+        class_names = ["Ham", "Spam"]
+
+    else:
+        raise NotImplementedError("Dataset %s not handled" % dataset)
+
+    print("Features", features)
+    print("Train/test size", X.shape, Z.shape)
+
+    # Decision Tree
+    print("\n\nDecision Tree")
+    dt = DecisionTreeClassifier(max_depth=3)
+    dt.fit(X, y)
+
+    # Visualize Decision Tree
+    print("\n\nTree Structure")
+    # Print using repr
+    print(dt.__repr__())
+    # Save tree to pdf
+    graph_from_dot_data(dt.to_graphviz())[0].write_pdf("%s-basic-tree.pdf" % dataset)
+
+    # Random Forest
+    print("\n\nRandom Forest")
+    rf = RandomForest(params, n=N, m=np.int_(np.sqrt(X.shape[1])))
+    rf.fit(X, y)
+    evaluate(rf)
+
+    # Generate Test Predictions
+    print("\n\nGenerate Test Predictions")
+    pred = rf.predict(Z)
+
+\end{lstlisting}
+
+1. 请参考以上模板实现随机森林算法。你也可以选择不参考模板，自行实现，但是不允许使用任何现成的随机森林实现。不过你可以使用库中提供的单棵决策树实现（我们在模板代码中使用了sklearn.tree .DecisionTreeClassifier）。如果使用模板代码，你主要需要实现随机森林继承的超类，即bagged trees的实现，它会基于不同的数据样本创建并训练多棵决策树。完成后，请在模板中补充上缺失的部分。（5 points）
+
+2.不需要长篇大论，每个问题用1-2句话回答即可：(5 points)
+\begin{itemize}
+\item 你是如何处理分类特征和缺失值的？
+% \item 你实现的决策树的停止准则是什么？
+\item 你是如何实现随机森林的？
+\item 你是否采用了特殊的方法加速训练？（回答“没有”也是可以的。）
+\item 还有什么特别棒的功能你实现了吗？（回答“没有”也是可以的。）
+\end{itemize}
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+3.对于这两个数据集，请分别训练一棵决策树和一个随机森林，并报告它们的训练准确率和测试准确率。  
+你需要报告8个数字（2个数据集 $\times$ 2个分类器 $\times$ 训练/测试）。(5 points)
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+4. 决策树和随机森林的决策分析。（5 points）
+\begin{itemize}
+\item
+对于决策树，选择来自每个类别（垃圾邮件和正常邮件）的一条数据点，列出决策树为对其分类所做的分裂（即，在哪个特征上以及该特征的哪个值上进行分裂）。
+以下是一个示例：
+
+\begin{enumerate}
+    \item (`hot") $\geq$ 2
+    \item (`thanks") $<$ 1
+    \item (`nigeria") $\geq$ 3
+    \item 因此这封邮件是垃圾邮件。
+\end{enumerate}
+
+\begin{enumerate}
+    \item (`budget") $\geq$ 2
+    \item (`spreadsheet") $\geq$ 1
+    \item 因此这封邮件是正常邮件。
+\end{enumerate}
+
+\item
+对于随机森林，找出并列出树根节点处最常见的分裂。例如：
+
+\begin{enumerate}
+    \item (`viagra") $\geq$ 3 (20 trees)
+    \item (`thanks") $<$ 4 (15 trees)
+    \item (`nigeria") $\geq$ 1 (5 trees)
+\end{enumerate}
+
+\end{itemize}
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+
+\section*{三. (20 points) 聚类理论}
+
+聚类是一种无监督学习任务，其核心是根据数据样本之间的相似性（通常由距离度量定义）将数据分成若干个簇。常用聚类算法如 \( k \)-均值和 DBSCAN 都需要特定的距离度量和超参数设置。以下问题围绕距离度量、目标函数、以及超参数设置展开：  
+
+1. 
+在聚类算法中，距离度量是衡量样本间相似性的基础，选择合适的距离度量对聚类效果有显著影响（5 points）。  
+
+(a) 给定样本 \( x = (x_1, x_2, \dots, x_d) \) 和 \( y = (y_1, y_2, \dots, y_d) \)，分别写出以下三种常见距离度量的数学公式： 
+\begin{itemize}
+    \item 欧几里得距离  
+    \item 曼哈顿距离
+    \item 余弦相似度（将其转换为距离形式）  
+\end{itemize}
+
+(b) 在以下场景中，分析哪种距离更适合使用，并简要说明原因：  
+\begin{itemize}
+    \item 场景 1：高维稀疏特征向量（如文本数据的 TF-IDF 表示）   
+    \item 场景 2：二维几何分布数据（如图像中的空间点分布）  
+\end{itemize}
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+2. \( k \)-均值聚类的目标函数与迭代过程, \( k \)-均值聚类的目标是最小化以下目标函数（10 points）：  
+\[
+J = \sum_{i=1}^k \sum_{x \in C_i} \|x - \mu_i\|^2
+\]  
+其中，\( C_i \) 表示第 \( i \) 个聚类簇，\( \mu_i \) 为第 \( i \) 个簇的中心。  
+
+(a) 推导在分配样本点到最近的簇中心时，为什么目标函数 \( J \) 会减少。 
+
+(b) 推导为什么更新簇中心为簇内样本点的均值时，目标函数 \( J \) 会减少。 
+
+(c) \( k \)-均值的超参数 \( k \) 对结果有何影响？  
+\begin{itemize}
+    \item  如果 \( k \) 设置过大或过小，分别可能会导致什么问题？  
+    \item 提出一种确定 \( k \) 的方法，并解释其原理。  
+\end{itemize}
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+3. 密度聚类（如 DBSCAN）依赖以下两个超参数（5 points）：  
+\begin{itemize}
+    \item \( \varepsilon \)（邻域半径）：定义一个点的邻域范围。  
+    \item \( \text{MinPts} \)（核心点的最小邻域点数）：定义核心点的密度阈值。 
+\end{itemize}
+(a) 核心点、边界点和噪声点的定义是什么？它们在聚类中的作用分别是什么？
+
+(b) 如果 \( \varepsilon \) 和 \( \text{MinPts} \) 设置不当，可能会出现哪些问题？  
+\begin{itemize}
+    \item \( \varepsilon \) 过大或过小    
+    \item \( \text{MinPts} \) 过大或过小  
+\end{itemize}
+   
+(c) 为什么 DBSCAN 不需要预先指定聚类簇的数量 \( k \)？这对实际应用有什么优势？
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+\section*{四. (30 points) 聚类实战}
+使用商场客户数据集(Mall Customer Dataset)完成客户分群分析。该数据集包含客户的年龄(Age)、年收入(Annual Income)和消费积分(Spending Score)等特征。你需要通过实现和优化聚类算法来完成客户画像分析。数据随作业提供。
+
+为方便起见，每小题我们提供了部分初始代码，其中包括预处理步骤和部分功能的实现。你可以自由选择使用或不使用这些代码来完成实现。
+\begin{lstlisting}[language=Python, caption=数据加载]
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+# 加载数据
+def load_mall_data():
+    df = pd.read_csv("Mall_Customers.csv")
+    X = df[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']].values
+    # 数据标准化
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    return X_scaled, X, df
+\end{lstlisting}
+1. 在不借助外部实现的情况下，手动实现KMeans方法(4 points)，在数据集上进行聚类，可视化聚类结果(3 points)，并解决下列问题(3 points)：
+\begin{itemize}
+    \item 如何使用肘部法则确定合适的k值，绘图说明
+    \item 简单分析每个客户群的特征
+    \item 计算和分析簇内平方和(inertia)
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Kmeans部分实现]
+class KMeans:
+    def __init__(self, n_clusters=3, max_iters=100):
+        self.n_clusters = n_clusters
+        self.max_iters = max_iters
+        self.centroids = None
+        self.labels = None
+        self.inertia_ = None  # 簇内平方和
+        
+    def fit(self, X):
+        """
+        实现K-means算法
+        参数:
+            X: shape (n_samples, n_features)
+        返回:
+            self
+        """
+        # TODO: 实现K-means算法
+        # 1. 随机初始化聚类中心
+        # 2. 迭代优化直到收敛
+        pass
+    
+    def predict(self, X):
+        """返回每个样本的聚类标签"""
+        pass
+        
+def plot_clusters(X, labels, centroids=None):
+    """绘制聚类结果的散点图"""
+    pass
+\end{lstlisting}
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+2. 基于问题一的实现，我们发现随机初始化可能导致结果不稳定。请实现和分析以下改进：
+\begin{itemize}
+    \item 实现K-means++初始化方法(4分)
+    \item 实现聚类评估指标(3分)：轮廓系数(Silhouette Score)、聚类稳定性评估
+    \item 对比分析(3分)
+    \begin{enumerate}
+        \item 比较随机初始化和K-means++的结果差异，可以通过可视化聚类图进行对比
+\item 比较两种方法的稳定性
+\item 分析初始化对收敛速度的影响
+    \end{enumerate}
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Kmeans++部分实现]
+class KMeansPlusPlus(KMeans):
+    def _kmeans_plus_plus_init(self, X):
+        """实现K-means++初始化方法"""
+        pass
+
+def compute_silhouette_score(X, labels):
+    """计算轮廓系数"""
+    pass
+
+def compute_cluster_stability(X, k, n_runs=10):
+    """评估聚类结果的稳定性"""
+    pass
+\end{lstlisting}
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+3. 在实际业务中，不同特征的重要性可能不同，且某些客户群可能需要大小相近。请实现带权重和大小约束的改进版本：
+\begin{itemize}
+    \item 实现带约束的聚类算法，需要支持特征加权和簇大小约束(4 points)
+    \item 在以下两个场景下重新进行实验：收入特征权重加倍,限制每个客户群至少包含20\%的客户, 绘制聚类结果(6 points)
+\end{itemize}
+\begin{lstlisting}[language=Python, caption=带约束的聚类算法部分实现]
+class ConstrainedKMeans(KMeansPlusPlus):
+    def __init__(self, n_clusters=3, max_iters=100, weights=None, size_constraints=None):
+        """
+        参数:
+            weights: 特征权重向量
+            size_constraints: 每个簇的最小和最大样本数量限制
+        """
+        super().__init__(n_clusters, max_iters)
+        self.weights = weights
+        self.size_constraints = size_constraints
+        
+    def _weighted_distance(self, X, centroids):
+        """计算加权欧氏距离"""
+        pass
+        
+    def _reassign_clusters(self, X, labels, distances):
+        """在满足大小约束的情况下重新分配样本到簇"""
+        pass
+\end{lstlisting}
+
+
+\textbf{\large 解:}
+
+\vspace{3em}
+
+
+\end{document}
